@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CTF Competition Formats</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a2e 50%, #16213e 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+        }
+        
+        .header h1 {
+            font-size: 3em;
+            background: linear-gradient(45deg, #00ff88, #00d4ff, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            text-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            color: #a0a0a0;
+            margin-bottom: 10px;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .ctf-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid transparent;
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            position: relative;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .ctf-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .ctf-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 13px;
+            padding: 2px;
+            background: linear-gradient(45deg, var(--accent-color), transparent, var(--accent-color));
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: xor;
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+        }
+        
+        .jeopardy { --accent-color: #ff6b6b; }
+        .attack-defense { --accent-color: #4ecdc4; }
+        .mixed { --accent-color: #45b7d1; }
+        .koth { --accent-color: #96ceb4; }
+        .red-blue { --accent-color: #feca57; }
+        
+        .card-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+            color: var(--accent-color);
+            text-align: center;
+        }
+        
+        .card-title {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+            color: var(--accent-color);
+        }
+        
+        .card-description {
+            font-size: 1.1em;
+            line-height: 1.6;
+            color: #e0e0e0;
+            text-align: center;
+        }
+        
+        .visual-demo {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            border-left: 4px solid var(--accent-color);
+        }
+        
+        .demo-element {
+            display: inline-block;
+            padding: 5px 10px;
+            margin: 3px;
+            background: var(--accent-color);
+            color: #000;
+            border-radius: 5px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        
+        .network-viz {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin-top: 15px;
+        }
+        
+        .network-node {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #000;
+            position: relative;
+        }
+        
+        .network-connection {
+            height: 2px;
+            background: var(--accent-color);
+            flex: 1;
+            margin: 0 5px;
+            opacity: 0.6;
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.05); }
+        }
+        
+        .glow {
+            filter: drop-shadow(0 0 10px var(--accent-color));
+        }
+        
+        .comparison-table {
+            margin-top: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .table-title {
+            text-align: center;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #00ff88;
+        }
+        
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 10px;
+            text-align: center;
+        }
+        
+        .table-header {
+            font-weight: bold;
+            background: rgba(0, 255, 136, 0.2);
+            padding: 10px;
+            border-radius: 5px;
+        }
+        
+        .table-cell {
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>CTF Competition Formats</h1>
+            <div class="subtitle">Capture The Flag Cybersecurity Challenges</div>
+        </div>
+        
+        <div class="grid">
+            <div class="ctf-card jeopardy">
+                <div class="card-icon">🧩</div>
+                <div class="card-title">JEOPARDY</div>
+                <div class="card-description">
+                    Individual puzzle-solving challenges with point values. Teams compete by solving cryptography, reverse engineering, web exploitation, and forensics problems.
+                </div>
+                <div class="visual-demo">
+                    <div class="demo-element">Crypto 100</div>
+                    <div class="demo-element">Web 200</div>
+                    <div class="demo-element">Rev 300</div>
+                    <div class="demo-element">Forensics 150</div>
+                    <div class="demo-element">PWN 400</div>
+                </div>
+            </div>
+            
+            <div class="ctf-card attack-defense">
+                <div class="card-icon">⚔️</div>
+                <div class="card-title">ATTACK-DEFENSE</div>
+                <div class="card-description">
+                    Teams simultaneously attack opponents' systems while defending their own. Real-time exploitation and patching of live services and networks.
+                </div>
+                <div class="visual-demo">
+                    <div class="network-viz">
+                        <div class="network-node glow pulse">A</div>
+                        <div class="network-connection"></div>
+                        <div class="network-node glow">🛡️</div>
+                        <div class="network-connection"></div>
+                        <div class="network-node glow pulse">B</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="ctf-card mixed">
+                <div class="card-icon">🔄</div>
+                <div class="card-title">MIXED FORMAT</div>
+                <div class="card-description">
+                    Combines puzzle-solving challenges with live system exploitation. Teams solve traditional CTF problems plus attack/defend real infrastructure.
+                </div>
+                <div class="visual-demo">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div class="demo-element">Puzzles</div>
+                            <div class="demo-element">Points</div>
+                        </div>
+                        <div style="font-size: 2em;">+</div>
+                        <div>
+                            <div class="demo-element">Live Systems</div>
+                            <div class="demo-element">Real Attacks</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="ctf-card koth">
+                <div class="card-icon">👑</div>
+                <div class="card-title">KING OF THE HILL</div>
+                <div class="card-description">
+                    Multiple teams compete to gain and maintain administrative control of a single target machine. Points awarded for time spent in control.
+                </div>
+                <div class="visual-demo">
+                    <div style="text-align: center;">
+                        <div class="network-node glow pulse" style="margin: 10px auto; width: 60px; height: 60px; font-size: 1.5em;">🏰</div>
+                        <div style="margin-top: 10px;">
+                            <div class="demo-element">Team A: 45min</div>
+                            <div class="demo-element">Team B: 23min</div>
+                            <div class="demo-element">Team C: 12min</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="ctf-card red-blue">
+                <div class="card-icon">🏢</div>
+                <div class="card-title">RED vs BLUE</div>
+                <div class="card-description">
+                    Realistic corporate network simulation. Red teams conduct penetration testing while Blue teams monitor, detect, and respond to threats in real-time.
+                </div>
+                <div class="visual-demo">
+                    <div class="network-viz">
+                        <div style="text-align: center;">
+                            <div class="demo-element" style="background: #ff4757;">RED TEAM</div>
+                            <div style="margin: 5px 0; color: #ff4757;">↓ Attack</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div class="network-node glow">🏢</div>
+                            <div style="font-size: 0.8em; margin-top: 5px;">Corporate Network</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="margin: 5px 0; color: #3742fa;">Defend ↑</div>
+                            <div class="demo-element" style="background: #3742fa;">BLUE TEAM</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="comparison-table">
+            <div class="table-title">Quick Comparison</div>
+            <div class="comparison-grid">
+                <div class="table-header">Format</div>
+                <div class="table-header">Skill Focus</div>
+                <div class="table-header">Team Size</div>
+                <div class="table-header">Duration</div>
+                
+                <div class="table-cell">Jeopardy</div>
+                <div class="table-cell">Problem Solving</div>
+                <div class="table-cell">1-6 people</div>
+                <div class="table-cell">Hours-Days</div>
+                
+                <div class="table-cell">Attack-Defense</div>
+                <div class="table-cell">Real-time Response</div>
+                <div class="table-cell">3-8 people</div>
+                <div class="table-cell">Hours</div>
+                
+                <div class="table-cell">Mixed</div>
+                <div class="table-cell">Both</div>
+                <div class="table-cell">4-10 people</div>
+                <div class="table-cell">Days</div>
+                
+                <div class="table-cell">King of Hill</div>
+                <div class="table-cell">System Exploitation</div>
+                <div class="table-cell">2-5 people</div>
+                <div class="table-cell">Hours</div>
+                
+                <div class="table-cell">Red vs Blue</div>
+                <div class="table-cell">Corporate Security</div>
+                <div class="table-cell">5-15 people</div>
+                <div class="table-cell">Days-Weeks</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
